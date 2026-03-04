@@ -1,0 +1,93 @@
+CREATE DATABASE Library_Management;
+--1- EMPLOYEES TABLE 
+CREATE Table Employees(
+   Emp_ID INT Primary Key,
+   FName VARCHAR(50) NOT NULL,
+   LName VARCHAR(50) NOT NULL,
+   Email VARCHAR(50) UNIQUE,
+   Salary DECIMAL(8,2) ,
+   Date_Of_Birth DATE,
+   Bouns DECIMAL(8,2) DEFAULT 0,
+   [Address] VARCHAR (200),
+   SupervisorID INT REFERENCES Employees(Emp_ID),
+   Floor_Number INT 
+);
+--2- CREATE FLOOR TABLE 
+CREATE TABLE Library_Floors(
+	Floor_Number INT Primary Key,
+	Block_Numbers INT NOT NULL,
+	Hiring_Date DATE,
+    Emp_ID INT REFERENCES Employees(Emp_ID)
+);
+-- alter  employee table  to add a FOREIGN KEY (Floor_Number)
+ALTER TABLE Employees
+ADD CONSTRAINT FK_Floor_Manager 
+FOREIGN KEY (Floor_Number) REFERENCES Library_Floors(Floor_Number);
+-- Create User Table  
+Create Table Users(
+  User_SSN INT Primary Key,
+  [Name] VARCHAR(50) Not Null,
+  Email VARCHAR(50) UNIQUE,
+  Emp_ID INT REFERENCES Employees(Emp_ID)
+ );
+ -- create user_phones table 
+Create Table User_Phones(
+  User_SSN INT REFERENCES Users(User_SSN),
+   Phone VARCHAR(11),
+   Primary Key (User_SSN,Phone)
+);
+ -- create  Shef table 
+ Create Table Shefs(
+   Shef_Code INT Primary Key,
+   Floor_Number INT REFERENCES Library_Floors(Floor_Number)
+ );
+ -- CREATE Books Table 
+ Create Table Books(
+   Book_ID INT  Primary Key, 
+   Title VARCHAR(20) NOT NULL ,
+   Shef_Code INT REFERENCES Shefs(Shef_Code),
+   Category_ID INT,
+	Publisher_ID INT
+);
+-- Create  Category Table   
+ Create Table Categories(
+  Category_ID INT Primary Key,
+  [Name] VARCHAR(50)
+ );
+-- Alter Book Table to add a FK Category_ID 
+Alter Table Books
+	ADD CONSTRAINT FK_Category_ID 
+	FOREIGN KEY (Category_ID )  REFERENCES  Categories(Category_ID );
+-- Create Publishers Table
+Create Table Publishers(
+  Publisher_ID INT Primary Key,
+  [Name] VARCHAR(50) NOT NULL
+  );
+-- Alter Book Table to add a FK Publisher_ID
+Alter Table Books
+	ADD CONSTRAINT FK_Publisher_ID
+	FOREIGN KEY (Publisher_ID )  REFERENCES  Publishers(Publisher_ID );
+
+ -- Create Author Table
+ Create Table Authors(
+	Author_ID INT Primary Key,
+	[Name] VARCHAR(50) NOT NULL
+ );
+ -- create Author_Books Table
+ Create Table Author_Books(
+  Author_ID INT REFERENCES Authors(Author_ID),
+  Book_ID INT REFERENCES Books(Book_ID),
+  Primary Key (Author_ID,Book_ID)
+  );
+  -- Create  Borrows Table 
+  Create Table Borrow(
+   Emp_ID INT REFERENCES Employees (Emp_ID),
+   User_SSN INT REFERENCES Users(User_SSN),
+   Book_ID INT REFERENCES Books(Book_ID),
+   Date_Borrowed DATE NOT NULL,
+   Due_Date DATE NOT NULL ,
+   Amount DECIMAL(8,2),
+   Primary Key (User_SSN,Book_ID,Date_Borrowed  )
+  );
+ 
+
